@@ -20,15 +20,16 @@ const (
 
 // DomainRequest holds the main domain fields for a request
 // JSON example for such request
-// {
-//   "id": "xxxxxxxxxxxxxxxxx",
-//   "fullName": "brand.cool",
-//   "topLevelDomain": "cool",
-//   "createdAt": "2016-07-01T13:12:22.000Z",
-//   "updatedAt": "2016-07-03T13:17:50.000Z",
-//   "type": "user",
-//   "active": false
-// }
+//
+//   {
+//     "id": "xxxxxxxxxxxxxxxxx",
+//     "fullName": "brand.cool",
+//     "topLevelDomain": "cool",
+//     "createdAt": "2016-07-01T13:12:22.000Z",
+//     "updatedAt": "2016-07-03T13:17:50.000Z",
+//     "type": "user",
+//     "active": false
+//   }
 type DomainRequest struct {
 	// Unique identifier for the branded domain
 	ID string `json:"id"`
@@ -59,24 +60,26 @@ const (
 )
 
 // LinkRequest holds the main link fields for a request
-// {
-//   "id": "xxxxxxxxxxxxxxxxx",
-//   "title": "The LaFerrari Supercar Convertible Is the New Best Way to Burn $1M | WIRED",
-//   "slashtag": "burn10M",
-//   "destination": "https://www.wired.com/2016/07/ferrari-laferrari-spider-convertible-photos-specs/",
-//   "shortUrl": "rebrand.ly/burn10M",
-//   "domain": {
-//     "id": "8f104cc5b6ee4a4ba7897b06ac2ddcfb",
-//     "fullName": "rebrand.ly"
-//   },
-//   "status": "active",
-//   "createdAt": "2016-07-13T10:54:12.000Z",
-//   "updatedAt": "2016-07-13T10:54:12.000Z",
-//   "clicks": 42,
-//   "lastClickAt": "2016-07-13T10:55:13.000Z",
-//   "favourite": false,
-//   "forwardParameters": true
-// }
+// JSON example for such request
+//
+//   {
+//     "id": "xxxxxxxxxxxxxxxxx",
+//     "title": "The LaFerrari Supercar Convertible Is the New Best Way to Burn $1M | WIRED",
+//     "slashtag": "burn10M",
+//     "destination": "https://www.wired.com/2016/07/ferrari-laferrari-spider-convertible-photos-specs/",
+//     "shortUrl": "rebrand.ly/burn10M",
+//     "domain": {
+//       "id": "8f104cc5b6ee4a4ba7897b06ac2ddcfb",
+//       "fullName": "rebrand.ly"
+//     },
+//     "status": "active",
+//     "createdAt": "2016-07-13T10:54:12.000Z",
+//     "updatedAt": "2016-07-13T10:54:12.000Z",
+//     "clicks": 42,
+//     "lastClickAt": "2016-07-13T10:55:13.000Z",
+//     "favourite": false,
+//     "forwardParameters": true
+//   }
 type LinkRequest struct {
 	// Unique identifier associated with the branded short link
 	ID string `json:"id"`
@@ -109,4 +112,92 @@ type LinkRequest struct {
 	// longurl.com/home/path?p=1, otherwise will redirect to longurl.com/home/path
 	// (without query parameters)
 	ForwardParameters bool `json:"forwardParameters"`
+}
+
+// AccountLimit holds the structure for limits at the main Account structure
+type AccountLimit struct {
+	// How many resources of the given type used
+	Used int64 `json:"used"`
+	// How many resources of the given type the account is allowing
+	Max int64 `json:"max"`
+}
+
+// AccountLimitName holds an "enum" of limitation names
+type AccountLimitName string
+
+// Holds the enum values for AccountLimitName
+const (
+	AccountLimitNameLinks     AccountLimitName = "links"
+	AccountLimitNameDomains   AccountLimitName = "domains"
+	AccountLimitNameTeamMates AccountLimitName = "teammates"
+	AccountLimitNameTags      AccountLimitName = "tags"
+	AccountLimitNameScripts   AccountLimitName = "scripts"
+)
+
+// AccountSubscription holds subscription information on specific category
+type AccountSubscription struct {
+	// Category the account's plan belongs to
+	Category string `json:"category"`
+	// UTC subscription date/time of the account's current plan
+	CreatedAt time.Time `json:"createdAt"`
+	// UTC expiration date/time of the account's current plan, when plan's
+	// category is not free
+	ExpiredAt time.Time `json:"expiredAt"`
+	// Account's resources usage and limits: how many links/domains/tags/etc
+	// created so far and which are the maximum limits
+	Limits map[AccountLimitName]AccountLimit `json:"limits"`
+}
+
+// AccountRequest holds the fields for account request
+// JSON example for such request
+//
+//   {
+//     "id": "xxxxxxxxxxxxxxxxx",
+//     "fullName": "Stanford University",
+//     "username": "fake@stanford.edu",
+//     "email": "fake@stanford.edu",
+//     "avatarUrl": "https://d3e7f5z1blhqw4.cloudfront.net/avatars/364381e1-963e-460a-9a6b-a16e86d196a2",
+//     "createdAt": "2016-07-13T10:54:12.000Z",
+//     "subscription": {
+//       "category": "free",
+//       "createdAt": "2016-07-13T10:54:12.000Z",
+//       "limits": {
+//         "links": {
+//           "used": 7504,
+//           "max": 10000
+//         },
+//         "domains": {
+//           "used": 17,
+//           "max": 100
+//         },
+//         "teammates": {
+//           "used": 5,
+//           "max": 100
+//         },
+//         "tags": {
+//           "used": 0,
+//           "max": 50
+//         },
+//         "scripts": {
+//           "used": 0,
+//           "max": 50
+//         }
+//       }
+//     }
+//   }
+type AccountRequest struct {
+	// Unique identifier of the account
+	ID string `json:"id"`
+	// Username used in login
+	Username string `json:"username"`
+	// Contact email of the account
+	Email string `json:"email"`
+	// Full name of the account owner
+	FullName string `json:"fullName"`
+	// URL of the account avatar
+	AvatarURL string `json:"avatarUrl"`
+	// UTC creation date/time of the account
+	CreatedAt time.Time `json:"createdAt"`
+	// Set of feature/limits info related to the account and its plan
+	Subscription AccountSubscription `json:"subscription"`
 }
