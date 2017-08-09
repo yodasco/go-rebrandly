@@ -21,4 +21,8 @@ func Test_validDestination(t *testing.T) {
 	dest = "%!"
 	err = validDestination(dest)
 	assert.NotEmpty(t, err)
+
+	dest = "#anchor"
+	err = validDestination(dest)
+	assert.Empty(t, err)
 }
