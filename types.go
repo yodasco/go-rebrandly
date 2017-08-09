@@ -6,9 +6,6 @@ import "time"
 // that defined at the model section by Rebrandly documentation located at:
 // https://developers.rebrandly.com/docs/model-overview
 
-// The default content type to use
-const contentType = "application/json"
-
 // DomainTypes holds an "enum" of allowed types
 type DomainTypes string
 
