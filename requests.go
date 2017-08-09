@@ -1,7 +1,9 @@
 package rebrandly
 
 import (
+	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -46,18 +48,23 @@ func InitCreateLink(destination string, slagTag string) (Request, error) {
 // If there was internal issue, an error return
 func (r Request) SendRequest(apiKey string) (interface{}, error) {
 	var reader io.Reader
+	var structToJSON []byte
+	var err error
 	if r.Operation != nil {
-		structToJSON, err := json.Marshal(r.Operation)
+		structToJSON, err = json.Marshal(r.Operation)
 		if err != nil {
 			return nil, err
 		}
-		_, err = io.ReadFull(reader, structToJSON)
-		if err != nil {
-			return nil, err
-		}
+
+		reader = bytes.NewReader(structToJSON)
 	}
 	client := &http.Client{}
-	req, err := http.NewRequest(r.Method, r.URL.String(), reader)
+	var req *http.Request
+	if len(structToJSON) > 0 {
+		req, err = http.NewRequest(r.Method, r.URL.String(), reader)
+	} else {
+		req, err = http.NewRequest(r.Method, r.URL.String(), nil)
+	}
 	if err != nil {
 		return nil, err
 	}
@@ -73,10 +80,30 @@ func (r Request) SendRequest(apiKey string) (interface{}, error) {
 		return nil, err
 	}
 
+	fmt.Printf("StatusCode: %d, body: %#v\n", resp.StatusCode, string(body))
 	return r.statusCodeToStruct(resp.StatusCode, body)
 }
 
 func (r Request) statusCodeToStruct(statusCode int, body []byte) (result interface{}, err error) {
-	err = json.Unmarshal(body, &result)
+	switch statusCode {
+	case http.StatusOK:
+	case http.StatusBadRequest:
+	case http.StatusUnauthorized:
+		var unauthorized UnauthorizedResponse
+		err = json.Unmarshal(body, &unauthorized)
+		result = unauthorized
+	case http.StatusForbidden:
+		var badRequest InvalidFormatResponse
+		err = json.Unmarshal(body, &badRequest)
+		result = badRequest
+	case http.StatusNotFound:
+	case http.StatusInternalServerError,
+		http.StatusBadGateway,
+		http.StatusServiceUnavailable,
+		http.StatusGatewayTimeout:
+	default:
+		return nil, fmt.Errorf("Unsupported StatusCode: %d", statusCode)
+	}
+	// err = json.Unmarshal(body, &result)
 	return
 }

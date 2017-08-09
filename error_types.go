@@ -37,6 +37,16 @@ type UnauthorizedResponse struct {
 	Code ErrorCode `json:"code"`
 }
 
+// ErrorRequest holds a structure for nested errors
+type ErrorRequest struct {
+	// Message to the user explaining what happened
+	Message string `json:"message"`
+	// Machine readable code to handle the error
+	Code ErrorCode `json:"code"`
+	// Request property which originated the error
+	Property string `json:"property"`
+}
+
 // InvalidFormatResponse is a struct that contains details regarding why a given
 // request had invalid format.
 //
@@ -89,6 +99,8 @@ type InvalidFormatResponse struct {
 	Prefix string `json:"prefix"`
 	// Character given in input
 	Character string `json:"character"`
+	// list of errors
+	Errors []ErrorRequest `json:"errors"`
 }
 
 // AlreadyExistsResponse indicates that it is not possible to create a resource
