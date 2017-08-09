@@ -201,3 +201,17 @@ type AccountRequest struct {
 	// Set of feature/limits info related to the account and its plan
 	Subscription AccountSubscription `json:"subscription"`
 }
+
+// ResourceRequest is a means to connect two resources together
+// JSON example for such request
+//
+//   {
+//     "id": "xxxx12433xxx135555",
+//     "ref": "/domains/8f104cxxxxxxxa7897bxxxxxxxfb"
+//   }
+type ResourceRequest struct {
+	// Unique identifier of the original resource
+	ID string `json:"id"`
+	// API path to resource details
+	Ref string `json:"ref"`
+}

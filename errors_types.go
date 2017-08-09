@@ -22,19 +22,19 @@ const (
 	ErrorCodeNotFound            ErrorCode = "NotFound"
 )
 
-// BasicErrorResponse is a struct for common properties for all errors (except
-// server error)
-type BasicErrorResponse struct {
-	Message string    `json:"message"`
-	Code    ErrorCode `json:"code"`
-}
-
 // UnauthorizedResponse is a struct for holding Unauthorized responce from the
 // server
-// Message - A message to the user explaining why the request was not authorized
-// Code - Always "Unauthorized"
+//
+// Example authorization error
+//   {
+//     "code": "Unauthorized",
+//     "message": "Missing OAuth token in request"
+//   }
 type UnauthorizedResponse struct {
-	BasicErrorResponse
+	// A message to the user explaining why the request was not authorized
+	Message string `json:"message"`
+	// Always "Unauthorized"
+	Code ErrorCode `json:"code"`
 }
 
 // InvalidFormatResponse is a struct that contains details regarding why a given
@@ -65,8 +65,10 @@ type UnauthorizedResponse struct {
 //     "range": ["individual", "business"]
 //   }
 type InvalidFormatResponse struct {
-	BasicErrorResponse
-
+	// Message to the user explaining what happened
+	Message string `json:"message"`
+	// Machine readable code to handle the error
+	Code ErrorCode `json:"code"`
 	// Request property which originated the error
 	Property string `json:"property"`
 	// Message to the developer further explaining what happened
@@ -100,8 +102,39 @@ type InvalidFormatResponse struct {
 //     "code": "AlreadyExists"
 //   }
 type AlreadyExistsResponse struct {
-	BasicErrorResponse
-
+	// Always "Already exists"
+	Message string `json:"message"`
+	// Always "AlreadyExists"
+	Code ErrorCode `json:"code"`
 	// Request property which originated the error
 	Property string `json:"property"`
+}
+
+// NotFoundResponse holds information of what was not found
+//
+// Example Not Found error
+//   {
+//     "property": "id",
+//     "message": "Not found",
+//     "code": "NotFound"
+//   }
+type NotFoundResponse struct {
+	// Always "Not found"
+	Message string `json:"message"`
+	// Always "NotFound"
+	Code ErrorCode `json:"code"`
+	// Request property which originated the error
+	Property string `json:"property"`
+}
+
+// ServerErrorResponse occurs when something went unexpectedly wrong with API
+// operation on the server side.
+//
+// Example generic error
+//   {
+//     "message": "An error occurred"
+//   }
+type ServerErrorResponse struct {
+	// Message to user explaining what happened
+	Message string `json:"message"`
 }
