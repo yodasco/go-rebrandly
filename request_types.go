@@ -7,6 +7,10 @@ const (
 	rebrandlyAPIURL = "https://api.rebrandly.com/"
 )
 
+const (
+	requestCreateLinks = string(rebrandlyAPIURL + "v1/links")
+)
+
 // ActionTypes is an enum of action types
 type ActionTypes string
 

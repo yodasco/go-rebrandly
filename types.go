@@ -44,6 +44,9 @@ type DomainRequest struct {
 	Active bool `json:"active"`
 }
 
+// DomainRequestList is a list of one or more DomainRequest
+type DomainRequestList []DomainRequest
+
 // LinkStatus holds an "enum" of allowed types
 type LinkStatus string
 
@@ -110,6 +113,9 @@ type LinkRequest struct {
 	// (without query parameters)
 	ForwardParameters bool `json:"forwardParameters"`
 }
+
+// LinkRequestList holds a list of LinkRequest
+type LinkRequestList []LinkRequest
 
 // AccountLimit holds the structure for limits at the main Account structure
 type AccountLimit struct {
@@ -211,4 +217,14 @@ type ResourceRequest struct {
 	ID string `json:"id"`
 	// API path to resource details
 	Ref string `json:"ref"`
+}
+
+// CountRequest is a request for counters
+//
+// JSON example:
+//   {
+//      "count": 42
+//   }
+type CountRequest struct {
+	Count int64 `json:"count"`
 }
