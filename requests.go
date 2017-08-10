@@ -1,5 +1,4 @@
 // Package rebrandly General Overview
-// ===================================
 //
 // The package implement most of the API by rebrandly.com.
 // The implementation provide full control over links, by doing CRUD operations,
@@ -25,7 +24,6 @@
 //
 //
 // How errors works
-// ----------------
 //
 // The package control two types of errors:
 //    1. Problematically errors, using Go's error type
@@ -44,7 +42,6 @@
 //
 //
 // Basic Usage
-// -----------
 //
 // Here is the most simple means to create a new link.
 //   link, err := rebrandl.yInitListLinks(
