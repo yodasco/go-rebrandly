@@ -148,6 +148,11 @@ type NotFoundResponse struct {
 	Code ErrorCode `json:"code"`
 	// Request property which originated the error
 	Property string `json:"property"`
+
+	// Undocumented fields
+
+	Source string `json:"source"`
+	ID     int64  `json:"id"`
 }
 
 // ServerErrorResponse occurs when something went unexpectedly wrong with API
