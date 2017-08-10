@@ -62,7 +62,7 @@ Here is the most simple means to create a new link.
   
     details, err := link.SendRequest("1234567890")
 
-If everything went well, `details` is now a LinkRequest struct that
+If everything went well, `details` is now a `LinkRequest` struct that
 hold information regarding the link of https://rebrand.ly/sdd12Wa
 with full details about it.
 
