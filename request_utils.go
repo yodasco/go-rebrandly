@@ -12,6 +12,10 @@ func statusCodeToStruct(r Request, statusCode int, body []byte) (result interfac
 	switch statusCode {
 	case http.StatusOK:
 		switch r.ActionType {
+		case ActionTypeLinkList:
+			var linkList LinkRequestList
+			err = json.Unmarshal(body, &linkList)
+			result = linkList
 		case ActionTypeLinkCreate,
 			ActionTypeLinkUpdate,
 			ActionTypeLinkDelete,
