@@ -10,6 +10,7 @@ const (
 const (
 	requestCreateLinks = string(rebrandlyAPIURL + "v1/links")
 	requestUpdateLinks = string(rebrandlyAPIURL + "v1/links/%s")
+	requestLinkDetails = string(rebrandlyAPIURL + "v1/links/%s")
 )
 
 // ActionTypes is an enum of action types

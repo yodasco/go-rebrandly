@@ -52,6 +52,7 @@ func InitCreateLink(destination string, slagTag string) (Request, error) {
 // Required fields:
 //  - Destination
 //  - SlashTag
+//  - Title
 //
 // Note: If domain was not provided, then it will change the domain to
 // rebrand.ly.
@@ -74,11 +75,29 @@ func InitUpdateLinkEx(linkID string, fields LinkRequest) (Request, error) {
 }
 
 // InitUpdateLink changes the destination and/or slagTag of an existed link
-func InitUpdateLink(linkID, destination, slagTag) (Request, error) {
+func InitUpdateLink(linkID, destination, slagTag, title string) (Request, error) {
 	return InitUpdateLinkEx(linkID, LinkRequest{
-		Destination: Destination,
+		Destination: destination,
 		SlashTag:    slagTag,
+		Title:       title,
 	})
+}
+
+// InitLinkDetails returns information on a linkID
+func InitLinkDetails(linkID string) (Request, error) {
+	url, err := url.Parse(fmt.Sprintf(requestLinkDetails, linkID))
+	if err != nil {
+		return Request{}, err
+	}
+
+	request := Request{
+		Method:     http.MethodGet,
+		URL:        *url,
+		ActionType: ActionTypeLinkDetails,
+		Operation:  nil,
+	}
+
+	return request, nil
 }
 
 // SendRequest send a request to rebrandly.
@@ -158,6 +177,9 @@ func statusCodeToStruct(r Request, statusCode int, body []byte) (result interfac
 		result = badRequest
 
 	case http.StatusNotFound:
+		var notFound NotFoundResponse
+		err = json.Unmarshal(body, &notFound)
+		result = notFound
 	case http.StatusInternalServerError,
 		http.StatusBadGateway,
 		http.StatusServiceUnavailable,
