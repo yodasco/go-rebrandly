@@ -11,6 +11,8 @@ const (
 	requestCreateLinks = string(rebrandlyAPIURL + "v1/links")
 	requestUpdateLinks = string(rebrandlyAPIURL + "v1/links/%s")
 	requestLinkDetails = string(rebrandlyAPIURL + "v1/links/%s")
+	requestDeleteLink  = string(rebrandlyAPIURL + "v1/links/%s")
+	requestListLinks   = string(rebrandlyAPIURL + "v1/links")
 )
 
 // ActionTypes is an enum of action types
@@ -39,4 +41,27 @@ type Request struct {
 	ActionType ActionTypes
 	// The struct for the operation to be made
 	Operation interface{}
+}
+
+// OrderDirType is an enum string type
+type OrderDirType string
+
+// enum for OrderDirType
+const (
+	OrderDirTypeAsc  OrderDirType = "asc"
+	OrderDirTypeDesc OrderDirType = "desc"
+	OrderDirTypeNone OrderDirType = ""
+)
+
+// OrderPagination holds fields to help create list actions for order
+// and for pagination
+type OrderPagination struct {
+	// Order by field - based on the list type, please see documentation for that
+	OrderBy string
+	// Order direction - default is usually desc
+	OrderDir OrderDirType
+	// How many records to skip - default 0
+	Offset uint64
+	// Limit the number of records - default 100
+	Limit uint64
 }

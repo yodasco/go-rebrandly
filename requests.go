@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"strconv"
 )
 
 // InitCreateLinkEx initialize the Request struct with parameters for creating
@@ -83,6 +84,26 @@ func InitUpdateLink(linkID, destination, slagTag, title string) (Request, error)
 	})
 }
 
+// InitDeleteLink deletes a linkid. It is possible to delete it temporarily
+// by setting trash to true
+func InitDeleteLink(linkID string, trash bool) (Request, error) {
+	url, err := url.Parse(fmt.Sprintf(requestDeleteLink, linkID))
+	if err != nil {
+		return Request{}, err
+	}
+	q := url.Query()
+	q.Add("trash", strconv.FormatBool(trash))
+	url.RawQuery = q.Encode()
+
+	request := Request{
+		Method:     http.MethodDelete,
+		URL:        *url,
+		ActionType: ActionTypeLinkDelete,
+		Operation:  nil,
+	}
+	return request, nil
+}
+
 // InitLinkDetails returns information on a linkID
 func InitLinkDetails(linkID string) (Request, error) {
 	url, err := url.Parse(fmt.Sprintf(requestLinkDetails, linkID))
@@ -97,6 +118,35 @@ func InitLinkDetails(linkID string) (Request, error) {
 		Operation:  nil,
 	}
 
+	return request, nil
+}
+
+// InitListLinks initialize a request for a list of all links based on
+// filters, order and pagination
+func InitListLinks(favorite bool, status, domainID string,
+	orderPagination OrderPagination) (Request, error) {
+
+	url, err := url.Parse(requestListLinks)
+	if err != nil {
+		return Request{}, err
+	}
+	orderAndPaginationURL(url, orderPagination)
+	q := url.Query()
+	q.Add("favorite", strconv.FormatBool(favorite))
+	if status != "" {
+		q.Add("status", status)
+	}
+	if domainID != "" {
+		q.Add("domain[id]", domainID)
+	}
+	url.RawQuery = q.Encode()
+
+	request := Request{
+		Method:     http.MethodGet,
+		URL:        *url,
+		ActionType: ActionTypeLinkList,
+		Operation:  nil,
+	}
 	return request, nil
 }
 
@@ -128,6 +178,9 @@ func (r Request) SendRequest(apiKey string) (interface{}, error) {
 	}
 	req.Header.Add("Content-Type", contentType)
 	req.Header.Add("apikey", apiKey)
+
+	fmt.Printf("Method: %s, url: %s\n\n", r.Method, r.URL.String())
+
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err
@@ -140,53 +193,4 @@ func (r Request) SendRequest(apiKey string) (interface{}, error) {
 
 	fmt.Printf("StatusCode: %d, body: %#v\n\n", resp.StatusCode, string(body))
 	return statusCodeToStruct(r, resp.StatusCode, body)
-}
-
-func statusCodeToStruct(r Request, statusCode int, body []byte) (result interface{}, err error) {
-	switch statusCode {
-	case http.StatusOK:
-		switch r.ActionType {
-		case ActionTypeLinkCreate,
-			ActionTypeLinkUpdate,
-			ActionTypeLinkDelete,
-			ActionTypeLinkDetails:
-			var linkRequest LinkRequest
-			err = json.Unmarshal(body, &linkRequest)
-			result = linkRequest
-		}
-	case http.StatusBadRequest:
-		var badRequest BadRequestResponse
-		err = json.Unmarshal(body, &badRequest)
-		result = badRequest
-
-	case http.StatusUnauthorized:
-		var unauthorized UnauthorizedResponse
-		if string(body) == "Unauthorized" {
-			unauthorized = UnauthorizedResponse{
-				Message: string(body),
-				Code:    ErrorCodeUnauthorized,
-			}
-		} else {
-			err = json.Unmarshal(body, &unauthorized)
-		}
-		result = unauthorized
-
-	case http.StatusForbidden:
-		var badRequest InvalidFormatResponse
-		err = json.Unmarshal(body, &badRequest)
-		result = badRequest
-
-	case http.StatusNotFound:
-		var notFound NotFoundResponse
-		err = json.Unmarshal(body, &notFound)
-		result = notFound
-	case http.StatusInternalServerError,
-		http.StatusBadGateway,
-		http.StatusServiceUnavailable,
-		http.StatusGatewayTimeout:
-	default:
-		return nil, fmt.Errorf("Unsupported StatusCode: %d", statusCode)
-	}
-	// err = json.Unmarshal(body, &result)
-	return
 }
