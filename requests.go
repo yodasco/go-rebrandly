@@ -23,6 +23,9 @@ func InitCreateLinkEx(fields LinkRequest) (Request, error) {
 	if err != nil {
 		return Request{}, err
 	}
+	if fields.Tags == nil {
+		fields.Tags = []string{}
+	}
 	request := Request{
 		Method:     http.MethodPost,
 		URL:        *url,
@@ -43,6 +46,41 @@ func InitCreateLink(destination string, slagTag string) (Request, error) {
 	})
 }
 
+// InitUpdateLinkEx initialize the Request struct with parameters for updating
+// an existed link.
+//
+// Required fields:
+//  - Destination
+//  - SlashTag
+//
+// Note: If domain was not provided, then it will change the domain to
+// rebrand.ly.
+func InitUpdateLinkEx(linkID string, fields LinkRequest) (Request, error) {
+	url, err := url.Parse(fmt.Sprintf(requestUpdateLinks, linkID))
+	if err != nil {
+		return Request{}, err
+	}
+	if fields.Tags == nil {
+		fields.Tags = []string{}
+	}
+
+	request := Request{
+		Method:     http.MethodPost,
+		URL:        *url,
+		ActionType: ActionTypeLinkUpdate,
+		Operation:  fields,
+	}
+	return request, nil
+}
+
+// InitUpdateLink changes the destination and/or slagTag of an existed link
+func InitUpdateLink(linkID, destination, slagTag) (Request, error) {
+	return InitUpdateLinkEx(linkID, LinkRequest{
+		Destination: Destination,
+		SlashTag:    slagTag,
+	})
+}
+
 // SendRequest send a request to rebrandly.
 // If everything goes well, the return is the answer by the HTTP request
 // If there was internal issue, an error return
@@ -56,6 +94,7 @@ func (r Request) SendRequest(apiKey string) (interface{}, error) {
 			return nil, err
 		}
 
+		fmt.Printf("JSON: %#v\n", string(structToJSON))
 		reader = bytes.NewReader(structToJSON)
 	}
 	client := &http.Client{}
@@ -81,21 +120,43 @@ func (r Request) SendRequest(apiKey string) (interface{}, error) {
 	}
 
 	fmt.Printf("StatusCode: %d, body: %#v\n", resp.StatusCode, string(body))
-	return r.statusCodeToStruct(resp.StatusCode, body)
+	return statusCodeToStruct(r, resp.StatusCode, body)
 }
 
-func (r Request) statusCodeToStruct(statusCode int, body []byte) (result interface{}, err error) {
+func statusCodeToStruct(r Request, statusCode int, body []byte) (result interface{}, err error) {
 	switch statusCode {
 	case http.StatusOK:
+		switch r.ActionType {
+		case ActionTypeLinkCreate,
+			ActionTypeLinkUpdate,
+			ActionTypeLinkDelete,
+			ActionTypeLinkDetails:
+			var linkRequest LinkRequest
+			err = json.Unmarshal(body, &linkRequest)
+			result = linkRequest
+		}
 	case http.StatusBadRequest:
+		var badRequest BadRequestResponse
+		err = json.Unmarshal(body, &badRequest)
+		result = badRequest
+
 	case http.StatusUnauthorized:
 		var unauthorized UnauthorizedResponse
-		err = json.Unmarshal(body, &unauthorized)
+		if string(body) == "Unauthorized" {
+			unauthorized = UnauthorizedResponse{
+				Message: string(body),
+				Code:    ErrorCodeUnauthorized,
+			}
+		} else {
+			err = json.Unmarshal(body, &unauthorized)
+		}
 		result = unauthorized
+
 	case http.StatusForbidden:
 		var badRequest InvalidFormatResponse
 		err = json.Unmarshal(body, &badRequest)
 		result = badRequest
+
 	case http.StatusNotFound:
 	case http.StatusInternalServerError,
 		http.StatusBadGateway,

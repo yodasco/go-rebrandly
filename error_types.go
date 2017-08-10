@@ -22,6 +22,17 @@ const (
 	ErrorCodeNotFound            ErrorCode = "NotFound"
 )
 
+// BadRequestResponse is the responce when a given JSON structure is invalid.
+//
+// Example JSON error
+//   {
+//      "Message": "Unexpected token a"
+//   }
+type BadRequestResponse struct {
+	// Message to the user explaining what is wrong
+	Message string `json:"message"`
+}
+
 // UnauthorizedResponse is a struct for holding Unauthorized responce from the
 // server
 //

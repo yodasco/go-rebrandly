@@ -30,6 +30,8 @@ const (
 type DomainRequest struct {
 	// Unique identifier for the branded domain
 	ID string `json:"id"`
+	// Referrer for the domain
+	Ref string `json:"ref"`
 	// Full name of the branded domain
 	FullName string `json:"fullName"`
 	// The top level domain part of the branded domain name
@@ -46,6 +48,13 @@ type DomainRequest struct {
 
 // DomainRequestList is a list of one or more DomainRequest
 type DomainRequestList []DomainRequest
+
+// CreatorRequest is an undocumented struct that returns in several requests
+type CreatorRequest struct {
+	ID        string `json:"id"`
+	FullName  string `json:"fullName"`
+	AvatarURL string `json:"avatarUrl"`
+}
 
 // LinkStatus holds an "enum" of allowed types
 type LinkStatus string
@@ -91,7 +100,7 @@ type LinkRequest struct {
 	// The destination URL you want your branded short link to point to
 	Destination string `json:"destination"`
 	// The full branded short link URL, including domain
-	ShortURL string `json:"short_url"`
+	ShortURL string `json:"shortUrl"`
 	// A reference to the branded domain's resource of a branded short link
 	Domain DomainRequest `json:"domain"`
 	// Status of the branded short link.
@@ -112,6 +121,15 @@ type LinkRequest struct {
 	// longurl.com/home/path?p=1, otherwise will redirect to longurl.com/home/path
 	// (without query parameters)
 	ForwardParameters bool `json:"forwardParameters"`
+
+	// *******************
+	// Undocumented fields
+	// *******************
+
+	HTTPS    bool           `json:"https"`
+	IsPublic bool           `json:"isPublic"`
+	Tags     []string       `json:"tags"`
+	Creator  CreatorRequest `json:"creator"`
 }
 
 // LinkRequestList holds a list of LinkRequest
