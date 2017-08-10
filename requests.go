@@ -241,6 +241,21 @@ func InitLinkCount(favourite bool, status, domain string) (Request, error) {
 	return request, nil
 }
 
+// InitDomainDetails initialize details regarding a domain id
+func InitDomainDetails(domainID string) (Request, error) {
+	url, err := url.Parse(fmt.Sprintf(requestDomainDetails, domainID))
+	if err != nil {
+		return Request{}, err
+	}
+	request := Request{
+		Method:     http.MethodGet,
+		URL:        *url,
+		ActionType: ActionTypeDomainDetails,
+		Operation:  nil,
+	}
+	return request, nil
+}
+
 // SendRequest send a request to rebrandly.
 // If everything goes well, the return is the answer by the HTTP request
 // If there was internal issue, an error return

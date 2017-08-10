@@ -8,12 +8,13 @@ const (
 )
 
 const (
-	requestCreateLinks = string(rebrandlyAPIURL + "v1/links")
-	requestUpdateLinks = string(rebrandlyAPIURL + "v1/links/%s")
-	requestLinkDetails = string(rebrandlyAPIURL + "v1/links/%s")
-	requestDeleteLink  = string(rebrandlyAPIURL + "v1/links/%s")
-	requestListLinks   = string(rebrandlyAPIURL + "v1/links")
-	requestLinkCount   = string(rebrandlyAPIURL + "v1/links/count")
+	requestCreateLinks   = string(rebrandlyAPIURL + "v1/links")
+	requestUpdateLinks   = string(rebrandlyAPIURL + "v1/links/%s")
+	requestLinkDetails   = string(rebrandlyAPIURL + "v1/links/%s")
+	requestDeleteLink    = string(rebrandlyAPIURL + "v1/links/%s")
+	requestListLinks     = string(rebrandlyAPIURL + "v1/links")
+	requestLinkCount     = string(rebrandlyAPIURL + "v1/links/count")
+	requestDomainDetails = string(rebrandlyAPIURL + "v1/domains/%s")
 )
 
 // ActionTypes is an enum of action types

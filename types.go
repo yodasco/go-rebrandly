@@ -15,6 +15,12 @@ const (
 	DomainTypeUser    DomainTypes = "user"
 )
 
+// DomainStatus  holds information regarding the status of the domain
+// This an undocumented struct
+type DomainStatus struct {
+	DNS string `json:"dns"`
+}
+
 // DomainRequest holds the main domain fields for a request
 // JSON example for such request
 //
@@ -44,6 +50,15 @@ type DomainRequest struct {
 	Type DomainTypes `json:"type"`
 	// Whether the branded domain can be used or not to create branded short links
 	Active bool `json:"active"`
+
+	// Undocumented fields
+
+	SubDomains     int64        `json:"subdomains"`
+	OwnerID        string       `json:"ownerId"`
+	HTTPS          bool         `json:"https"`
+	Level          int          `json:"level"`
+	Status         DomainStatus `json:"status"`
+	CustomHomepage string       `json:"customHomepage"`
 }
 
 // DomainRequestList is a list of one or more DomainRequest
