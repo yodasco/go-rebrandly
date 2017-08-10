@@ -150,6 +150,30 @@ func InitListLinks(favorite bool, status, domainID string,
 	return request, nil
 }
 
+// InitLinkCount initialize a request for Counting the number of existed links
+func InitLinkCount(favourite bool, status, domain string) (Request, error) {
+	url, err := url.Parse(requestLinkCount)
+	if err != nil {
+		return Request{}, err
+	}
+	q := url.Query()
+	q.Add("favourite", strconv.FormatBool(favourite))
+	if status != "" {
+		q.Add("status", status)
+	}
+	if domain != "" {
+		q.Add("domain.id", domain)
+	}
+
+	request := Request{
+		Method:     http.MethodGet,
+		URL:        *url,
+		ActionType: ActionTypeLinkCount,
+		Operation:  nil,
+	}
+	return request, nil
+}
+
 // SendRequest send a request to rebrandly.
 // If everything goes well, the return is the answer by the HTTP request
 // If there was internal issue, an error return

@@ -13,6 +13,7 @@ const (
 	requestLinkDetails = string(rebrandlyAPIURL + "v1/links/%s")
 	requestDeleteLink  = string(rebrandlyAPIURL + "v1/links/%s")
 	requestListLinks   = string(rebrandlyAPIURL + "v1/links")
+	requestLinkCount   = string(rebrandlyAPIURL + "v1/links/count")
 )
 
 // ActionTypes is an enum of action types
