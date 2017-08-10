@@ -164,6 +164,7 @@ func InitLinkCount(favourite bool, status, domain string) (Request, error) {
 	if domain != "" {
 		q.Add("domain.id", domain)
 	}
+	url.RawQuery = q.Encode()
 
 	request := Request{
 		Method:     http.MethodGet,
