@@ -137,7 +137,7 @@ func InitListLinks(favorite bool, status, domainID string,
 		q.Add("status", status)
 	}
 	if domainID != "" {
-		q.Add("domain[id]", domainID)
+		q.Add("domain.id", domainID)
 	}
 	url.RawQuery = q.Encode()
 
