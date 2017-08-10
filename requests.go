@@ -94,7 +94,7 @@ func (r Request) SendRequest(apiKey string) (interface{}, error) {
 			return nil, err
 		}
 
-		fmt.Printf("JSON: %#v\n", string(structToJSON))
+		fmt.Printf("JSON: %#v\n\n", string(structToJSON))
 		reader = bytes.NewReader(structToJSON)
 	}
 	client := &http.Client{}
@@ -119,7 +119,7 @@ func (r Request) SendRequest(apiKey string) (interface{}, error) {
 		return nil, err
 	}
 
-	fmt.Printf("StatusCode: %d, body: %#v\n", resp.StatusCode, string(body))
+	fmt.Printf("StatusCode: %d, body: %#v\n\n", resp.StatusCode, string(body))
 	return statusCodeToStruct(r, resp.StatusCode, body)
 }
 
