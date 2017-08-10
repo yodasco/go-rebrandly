@@ -256,6 +256,59 @@ func InitDomainDetails(domainID string) (Request, error) {
 	return request, nil
 }
 
+// InitDomainList initialize the domain list with filters, ordering and
+// pagination support
+func InitDomainList(active bool, domainType string,
+	orderPagination OrderPagination) (Request, error) {
+
+	url, err := url.Parse(requestDomainList)
+	if err != nil {
+		return Request{}, err
+	}
+	orderAndPaginationURL(url, orderPagination)
+
+	q := url.Query()
+	q.Add("active", strconv.FormatBool(active))
+	if domainType != "" {
+		q.Add("type", domainType)
+	}
+	url.RawQuery = q.Encode()
+
+	request := Request{
+		Method:     http.MethodGet,
+		URL:        *url,
+		ActionType: ActionTypeDomainList,
+		Operation:  nil,
+	}
+
+	return request, nil
+}
+
+// InitDomainCount initialize the request for counting the number of domains
+// available based on filters
+func InitDomainCount(active bool, domainType string) (Request, error) {
+	url, err := url.Parse(requestDomainCount)
+	if err != nil {
+		return Request{}, err
+	}
+
+	q := url.Query()
+	q.Add("active", strconv.FormatBool(active))
+	if domainType != "" {
+		q.Add("type", domainType)
+	}
+	url.RawQuery = q.Encode()
+
+	request := Request{
+		Method:     http.MethodGet,
+		URL:        *url,
+		ActionType: ActionTypeDommainCount,
+		Operation:  nil,
+	}
+
+	return request, nil
+}
+
 // SendRequest send a request to rebrandly.
 // If everything goes well, the return is the answer by the HTTP request
 // If there was internal issue, an error return
@@ -269,7 +322,6 @@ func (r Request) SendRequest(apiKey string) (interface{}, error) {
 			return nil, err
 		}
 
-		fmt.Printf("JSON: %#v\n\n", string(structToJSON))
 		reader = bytes.NewReader(structToJSON)
 	}
 	client := &http.Client{}
@@ -285,8 +337,6 @@ func (r Request) SendRequest(apiKey string) (interface{}, error) {
 	req.Header.Add("Content-Type", contentType)
 	req.Header.Add("apikey", apiKey)
 
-	fmt.Printf("Method: %s, url: %s\n\n", r.Method, r.URL.String())
-
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err
@@ -297,6 +347,5 @@ func (r Request) SendRequest(apiKey string) (interface{}, error) {
 		return nil, err
 	}
 
-	fmt.Printf("StatusCode: %d, body: %#v\n\n", resp.StatusCode, string(body))
 	return statusCodeToStruct(r, resp.StatusCode, body)
 }
