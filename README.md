@@ -38,7 +38,6 @@ Functions in this package typically yield two types of errors:
 The 2nd type of errors, are typically structs parsed from the JSON returned by rebrandly.
 They are listed in the file `error_types.go` and are documented there.
 
-// TODO(ido): I'm not sure it's a wise design decision, let's branstorm about that. 
 Therefore when using the API it is important to realize that even when the API returns a non-error result, the client of the API must look into the returned struct to see if it encapsulates a REST error returned from rebrandly. 
 
 As convinience, the function `IsErrorStruct` takes such struct and determines if it is a REST error or not.
@@ -56,7 +55,6 @@ Here is the most simple means to create a new link.
   
     details, err := link.SendRequest("1234567890")
     
-    //TODO(ido): Shouldn't you use the IsErrorStruct here?
 
 If everything went well, `details` is now a `LinkRequest` struct that
 holds information regarding the link of https://rebrand.ly/sdd12Wa
