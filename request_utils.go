@@ -90,7 +90,6 @@ func statusCodeToStruct(r Request, statusCode int, body []byte) (result interfac
 	default:
 		return nil, fmt.Errorf("Unsupported StatusCode: %d", statusCode)
 	}
-	// err = json.Unmarshal(body, &result)
 	return
 }
 
