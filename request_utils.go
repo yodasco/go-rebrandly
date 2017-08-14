@@ -45,7 +45,9 @@ func statusCodeToStruct(r Request, statusCode int, body []byte) (result interfac
 	case http.StatusBadRequest:
 		var badRequest BadRequestResponse
 		err = json.Unmarshal(body, &badRequest)
-		result = badRequest
+		if err == nil {
+			err = badRequest
+		}
 
 	case http.StatusUnauthorized:
 		var unauthorized UnauthorizedResponse
@@ -57,25 +59,37 @@ func statusCodeToStruct(r Request, statusCode int, body []byte) (result interfac
 		} else {
 			err = json.Unmarshal(body, &unauthorized)
 		}
-		result = unauthorized
+		if err == nil {
+			err = unauthorized
+		}
 
 	case http.StatusForbidden:
 		var badRequest InvalidFormatResponse
 		err = json.Unmarshal(body, &badRequest)
-		result = badRequest
+		if err == nil {
+			err = badRequest
+		}
 
 	case http.StatusNotFound:
 		var notFound NotFoundResponse
 		err = json.Unmarshal(body, &notFound)
-		result = notFound
+		if err == nil {
+			err = notFound
+		}
 	case http.StatusInternalServerError,
 		http.StatusBadGateway,
 		http.StatusServiceUnavailable,
 		http.StatusGatewayTimeout:
+
+		var serverErr ServerErrorResponse
+		err = json.Unmarshal(body, &serverErr)
+		if err == nil {
+			err = serverErr
+		}
+
 	default:
 		return nil, fmt.Errorf("Unsupported StatusCode: %d", statusCode)
 	}
-	// err = json.Unmarshal(body, &result)
 	return
 }
 

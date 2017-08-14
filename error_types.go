@@ -166,3 +166,27 @@ type ServerErrorResponse struct {
 	// Message to user explaining what happened
 	Message string `json:"message"`
 }
+
+func (e BadRequestResponse) Error() string {
+	return e.Message
+}
+
+func (e UnauthorizedResponse) Error() string {
+	return e.Message
+}
+
+func (e InvalidFormatResponse) Error() string {
+	return e.Message
+}
+
+func (e AlreadyExistsResponse) Error() string {
+	return e.Message
+}
+
+func (e NotFoundResponse) Error() string {
+	return e.Message
+}
+
+func (e ServerErrorResponse) Error() string {
+	return e.Message
+}
