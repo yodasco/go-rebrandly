@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/yodasco/rebrandly"
+	"github.com/yodasco/go-rebrandly"
 )
 
 func main() {
