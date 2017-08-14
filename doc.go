@@ -22,20 +22,6 @@ mandatory by the API in order to function, but does not add extra fields,
 focusing only on the task rather then the extra functionality.
 
 
-Error handling
-----------------
-
-Functions in this package typically yield two types of errors:
-   1. Programmatic errors, using Go's `error` type
-   2. REST errors - Errors that come up as a result of using the API itself
-
-The 2nd type of errors, are typically structs parsed from the JSON returned by rebrandly.
-They are listed in the file `error_types.go` and are documented there.
-
-Therefore when using the API it is important to realize that even when the API returns a non-error result, the client of the API must look into the returned struct to see if it encapsulates a REST error returned from rebrandly.
-
-As convinience, the function `IsErrorStruct` takes such struct and determines if it is a REST error or not.
-
 Basic Usage
 -----------
 
@@ -48,14 +34,16 @@ Here is the most simple means to create a new link.
     }
 
     details, err := link.SendRequest("1234567890")
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println("details.ShortURL: ", details.(rebrandly.LinkRequest).ShortURL)
 
 
 If everything went well, `details` is now a `LinkRequest` struct that
 holds information regarding the link of https://rebrand.ly/sdd12Wa
 with full details about it.
 
-If there was an error returned by the server, then an error struct will be
-returned.
-
-Any other type of error will be placed on the `err` variable instead.*/
+*/
 package rebrandly

@@ -54,13 +54,14 @@ Here is the most simple means to create a new link.
     }
   
     details, err := link.SendRequest("1234567890")
-    
+    if err != nil {
+      panic(err)
+    }
+
+    fmt.Println("details.ShortURL: ", details.(rebrandly.LinkRequest).ShortURL)
+
 
 If everything went well, `details` is now a `LinkRequest` struct that
 holds information regarding the link of https://rebrand.ly/sdd12Wa
 with full details about it.
 
-If there was an error returned by the server, then an error struct will be
-returned.
-
-Any other type of error will be placed on the `err` variable instead.
