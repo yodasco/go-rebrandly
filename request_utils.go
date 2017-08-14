@@ -11,36 +11,7 @@ import (
 func statusCodeToStruct(r Request, statusCode int, body []byte) (result interface{}, err error) {
 	switch statusCode {
 	case http.StatusOK:
-		switch r.ActionType {
-		case ActionTypeDomainList:
-			var domainList DomainRequestList
-			err = json.Unmarshal(body, &domainList)
-			result = domainList
-
-		case ActionTypeDomainDetails:
-			var domain DomainRequest
-			err = json.Unmarshal(body, &domain)
-			result = domain
-
-		case ActionTypeLinkCount,
-			ActionTypeDommainCount:
-			var linkCount CountRequest
-			err = json.Unmarshal(body, &linkCount)
-			result = linkCount
-
-		case ActionTypeLinkList:
-			var linkList LinkRequestList
-			err = json.Unmarshal(body, &linkList)
-			result = linkList
-
-		case ActionTypeLinkCreate,
-			ActionTypeLinkUpdate,
-			ActionTypeLinkDelete,
-			ActionTypeLinkDetails:
-			var linkRequest LinkRequest
-			err = json.Unmarshal(body, &linkRequest)
-			result = linkRequest
-		}
+		return handleSuccess(r, body)
 
 	case http.StatusBadRequest:
 		var badRequest BadRequestResponse
@@ -90,6 +61,42 @@ func statusCodeToStruct(r Request, statusCode int, body []byte) (result interfac
 	default:
 		return nil, fmt.Errorf("Unsupported StatusCode: %d", statusCode)
 	}
+	return
+}
+
+func handleSuccess(r Request, body []byte) (result interface{}, err error) {
+	switch r.ActionType {
+	case ActionTypeDomainList:
+		var domainList DomainRequestList
+		err = json.Unmarshal(body, &domainList)
+		result = domainList
+
+	case ActionTypeDomainDetails:
+		var domain DomainRequest
+		err = json.Unmarshal(body, &domain)
+		result = domain
+
+	case ActionTypeLinkCount,
+		ActionTypeDommainCount:
+		var linkCount CountRequest
+		err = json.Unmarshal(body, &linkCount)
+		result = linkCount
+
+	case ActionTypeLinkList:
+		var linkList LinkRequestList
+		err = json.Unmarshal(body, &linkList)
+		result = linkList
+
+	case ActionTypeLinkCreate,
+		ActionTypeLinkUpdate,
+		ActionTypeLinkDelete,
+		ActionTypeLinkDetails:
+		var linkRequest LinkRequest
+		err = json.Unmarshal(body, &linkRequest)
+		result = linkRequest
+
+	}
+
 	return
 }
 
