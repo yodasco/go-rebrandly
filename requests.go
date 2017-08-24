@@ -24,9 +24,6 @@ func InitCreateLinkEx(fields LinkRequest) (Request, error) {
 	if err != nil {
 		return Request{}, err
 	}
-	if fields.Tags == nil {
-		fields.Tags = []string{}
-	}
 	request := Request{
 		Method:     http.MethodPost,
 		URL:        *url,
@@ -62,10 +59,6 @@ func InitUpdateLinkEx(linkID string, fields LinkRequest) (Request, error) {
 	if err != nil {
 		return Request{}, err
 	}
-	if fields.Tags == nil {
-		fields.Tags = []string{}
-	}
-
 	request := Request{
 		Method:     http.MethodPost,
 		URL:        *url,

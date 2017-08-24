@@ -143,7 +143,6 @@ type LinkRequest struct {
 
 	HTTPS    bool           `json:"https"`
 	IsPublic bool           `json:"isPublic"`
-	Tags     []string       `json:"tags"`
 	Creator  CreatorRequest `json:"creator"`
 }
 
